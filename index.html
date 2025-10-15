@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 50%;
+            border-radius: 5px;
+            margin: auto;
+            padding: 16px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        img {
+            border-radius: 10px;
+            width: 100%;
+            height: auto;
+        }
+        .container {
+            padding: 2px 16px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0;
+            box-sizing: border-box;
+        }
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .edit-button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <img id="profilePic" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=420&height=420&format=png" alt="Avatar">
+    <div class="container">
+        <p><b>Roblox Username: </b><a id="usernameLink" href="#" target="_blank">{Username}</a></p>
+        <p id="usernameText">{Username}</p>
+        <p>Interior Designer</p>
+        <button class="edit-button" onclick="editDetails()">Edit</button>
+        <div id="editForm" class="hidden">
+            <input type="text" id="usernameInput" placeholder="Enter new username">
+            <button class="edit-button" onclick="saveDetails()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let userId = '1'; // Replace with actual logic to get user ID
+
+    function editDetails() {
+        const username = document.getElementById('usernameText').innerText;
+        document.getElementById('usernameInput').value = username;
+        document.getElementById('editForm').classList.remove('hidden');
+    }
+
+    function saveDetails() {
+        const newUsername = document.getElementById('usernameInput').value;
+        document.getElementById('usernameText').innerText = newUsername;
+        document.getElementById('usernameLink').innerText = newUsername;
+        document.getElementById('usernameLink').href = `https://www.roblox.com/users/${userId}/profile`;
+
+        // Fetch user ID using your proxy server
+        fetch(`https://your-server.com/proxy?username=${newUsername}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.Id) {
+                    userId = data.Id; // Update userId with the new user's ID
+                    document.getElementById('profilePic').src = `https://www.roblox.com/headshot-thumbnail/image?userId=${userId}&width=420&height=420&format=png`;
+                    document.getElementById('usernameLink').href = `https://www.roblox.com/users/${userId}/profile`;
+                } else {
+                    alert('User not found. Please check the username.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                alert('Error fetching user details. Please try again later.');
+            });
+
+        document.getElementById('editForm').classList.add('hidden');
+    }
+</script>
+
+</body>
+</html>
